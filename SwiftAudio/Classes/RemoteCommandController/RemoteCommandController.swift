@@ -48,9 +48,11 @@ public class RemoteCommandController {
     }
     
     private func disableCommand<Command: RemoteCommandProtocol>(_ command: Command) {
-        center[keyPath: command.commandKeyPath].isEnabled = false
-        center[keyPath: command.commandKeyPath].removeTarget(commandTargetPointers[command.id])
-        commandTargetPointers.removeValue(forKey: command.id)
+        if center[keyPath: command.commandKeyPath].isEnabled {
+            center[keyPath: command.commandKeyPath].isEnabled = false
+            center[keyPath: command.commandKeyPath].removeTarget(commandTargetPointers[command.id])
+            commandTargetPointers.removeValue(forKey: command.id)
+        }
     }
     
     private func enable(command: RemoteCommand) {
@@ -166,7 +168,7 @@ public class RemoteCommandController {
         return MPRemoteCommandHandlerStatus.commandFailed
     }
     
-    private func handleNextTrackCommandDefault(event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+    internal func handleNextTrackCommandDefault(event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
         if let player = self.audioPlayer as? QueuedAudioPlayer {
             do {
                 try player.next()

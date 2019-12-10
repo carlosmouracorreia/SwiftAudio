@@ -214,11 +214,19 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
     
     // MARK: - Remote Command Center
     
-    func enableRemoteCommands(_ commands: [RemoteCommand]) {
+    public func enableRemoteCommands(_ commands: [RemoteCommand]) {
         self.remoteCommandController.enable(commands: commands)
     }
     
-    func enableRemoteCommands(forItem item: AudioItem) {
+    public func disableRemoteCommands(_ commands: [RemoteCommand]) {
+        self.remoteCommandController.disable(commands: commands)
+    }
+    
+    public func setHandleNextTrackCommand(_ handler: RemoteCommandHandler?) {
+        self.remoteCommandController.handleNextTrackCommand = handler ?? self.remoteCommandController.handleNextTrackCommandDefault
+    }
+    
+    public func enableRemoteCommands(forItem item: AudioItem) {
         if let item = item as? RemoteCommandable {
             self.enableRemoteCommands(item.getCommands())
         }
