@@ -72,7 +72,7 @@ public struct SkipIntervalCommand: RemoteCommandProtocol {
     
     public var handlerKeyPath: KeyPath<RemoteCommandController, RemoteCommandHandler>
     
-    func set(preferredIntervals: [NSNumber]) -> SkipIntervalCommand {
+    public func set(preferredIntervals: [NSNumber]) -> SkipIntervalCommand {
         MPRemoteCommandCenter.shared()[keyPath: commandKeyPath].preferredIntervals = preferredIntervals
         return self
     }
@@ -95,7 +95,7 @@ public struct FeedbackCommand: RemoteCommandProtocol {
     
     public var handlerKeyPath: KeyPath<RemoteCommandController, RemoteCommandHandler>
     
-    func set(isActive: Bool, localizedTitle: String, localizedShortTitle: String) -> FeedbackCommand {
+    public func set(isActive: Bool, localizedTitle: String, localizedShortTitle: String) -> FeedbackCommand {
         MPRemoteCommandCenter.shared()[keyPath: commandKeyPath].isActive = isActive
         MPRemoteCommandCenter.shared()[keyPath: commandKeyPath].localizedTitle = localizedTitle
         MPRemoteCommandCenter.shared()[keyPath: commandKeyPath].localizedShortTitle = localizedShortTitle
@@ -133,7 +133,7 @@ public enum RemoteCommand {
      All values in an array for convenience.
      Don't use for associated values.
      */
-    static func all() -> [RemoteCommand] {
+    public static func all() -> [RemoteCommand] {
         return [
             .play,
             .pause,
