@@ -19,8 +19,8 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
         return _wrapper
     }
     
-    public let nowPlayingInfoController: NowPlayingInfoControllerProtocol?
-    public let remoteCommandController: RemoteCommandController?
+    public var nowPlayingInfoController: NowPlayingInfoControllerProtocol?
+    public var remoteCommandController: RemoteCommandController?
     public let event = EventHolder()
     
     var _currentItem: AudioItem?
