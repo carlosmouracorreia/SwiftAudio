@@ -19,8 +19,8 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
         return _wrapper
     }
     
-    public let nowPlayingInfoController: NowPlayingInfoControllerProtocol
-    public let remoteCommandController: RemoteCommandController
+    public let nowPlayingInfoController: NowPlayingInfoControllerProtocol?
+    public let remoteCommandController: RemoteCommandController?
     public let event = EventHolder()
     
     var _currentItem: AudioItem?
@@ -127,14 +127,17 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
      
      - parameter infoCenter: The InfoCenter to update. Default is `MPNowPlayingInfoCenter.default()`.
      */
-    public init(nowPlayingInfoController: NowPlayingInfoControllerProtocol = NowPlayingInfoController(),
-                remoteCommandController: RemoteCommandController = RemoteCommandController()) {
+    public init(nowPlayingInfoToSet: Bool = true) {
+        
         self._wrapper = AVPlayerWrapper()
-        self.nowPlayingInfoController = nowPlayingInfoController
-        self.remoteCommandController = remoteCommandController
+       
+        if nowPlayingInfoToSet {
+                   nowPlayingInfoController = NowPlayingInfoController()
+                   remoteCommandController  = RemoteCommandController()
+        }
         
         self._wrapper.delegate = self
-        self.remoteCommandController.audioPlayer = self
+        self.remoteCommandController?.audioPlayer = self
     }
     
     // MARK: - Player Actions
@@ -215,15 +218,11 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
     // MARK: - Remote Command Center
     
     public func enableRemoteCommands(_ commands: [RemoteCommand]) {
-        self.remoteCommandController.enable(commands: commands)
+        self.remoteCommandController?.enable(commands: commands)
     }
     
     public func disableRemoteCommands(_ commands: [RemoteCommand]) {
-        self.remoteCommandController.disable(commands: commands)
-    }
-    
-    public func setHandleNextTrackCommand(_ handler: RemoteCommandHandler?) {
-        self.remoteCommandController.handleNextTrackCommand = handler ?? self.remoteCommandController.handleNextTrackCommandDefault
+        self.remoteCommandController?.disable(commands: commands)
     }
     
     public func enableRemoteCommands(forItem item: AudioItem) {
@@ -249,7 +248,7 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
     public func loadNowPlayingMetaValues() {
         guard let item = currentItem else { return }
         
-        nowPlayingInfoController.set(keyValues: [
+        nowPlayingInfoController?.set(keyValues: [
             MediaItemProperty.artist(item.getArtist()),
             MediaItemProperty.title(item.getTitle()),
             MediaItemProperty.albumTitle(item.getAlbumTitle()),
@@ -273,15 +272,15 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
     }
     
     private func updateNowPlayingDuration(_ duration: Double) {
-        nowPlayingInfoController.set(keyValue: MediaItemProperty.duration(duration))
+        nowPlayingInfoController?.set(keyValue: MediaItemProperty.duration(duration))
     }
     
     private func updateNowPlayingRate(_ rate: Float) {
-        nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.playbackRate(Double(rate)))
+        nowPlayingInfoController?.set(keyValue: NowPlayingInfoProperty.playbackRate(Double(rate)))
     }
     
     private func updateNowPlayingCurrentTime(_ currentTime: Double) {
-        nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.elapsedPlaybackTime(currentTime))
+        nowPlayingInfoController?.set(keyValue: NowPlayingInfoProperty.elapsedPlaybackTime(currentTime))
     }
     
     private func loadArtwork(forItem item: AudioItem) {
@@ -290,7 +289,7 @@ public class AudioPlayer: AVPlayerWrapperDelegate {
                 let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
                     return image
                 })
-                self.nowPlayingInfoController.set(keyValue: MediaItemProperty.artwork(artwork))
+                self.nowPlayingInfoController?.set(keyValue: MediaItemProperty.artwork(artwork))
             }
         }
     }
